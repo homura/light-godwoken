@@ -14,7 +14,9 @@ jobs:
         run: |
           yarn install --frozen-lockfile --force
           yarn build
-      - name: Deploy
-        uses: JamesIves/github-pages-deploy-action@v4.2.2
-        with:
-          folder: build # The folder the action should deploy.
+      - name: deploy
+        run: |
+          git remote set-url origin https://git:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git
+          yarn deploy -- -u "github-actions-bot <support+actions@github.com>"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
