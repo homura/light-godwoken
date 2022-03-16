@@ -1,12 +1,13 @@
-import { CopyOutlined, LoadingOutlined, PlusOutlined } from "@ant-design/icons";
+import { CopyOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Script } from "@ckb-lumos/lumos";
 import { Button, Modal, notification, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useLightGodwoken } from "../hooks/useLightGodwoken";
 import CKBInputPanel from "./CKBInputPanel";
-import CurrencyInputPanel from "./CurrencyInputPanel";
 import Page from "./Page";
+import { useQuery } from "react-query";
+import { getDisplayAmount } from "../utils/formatTokenAmount";
 
 const { Text } = Typography;
 
@@ -21,15 +22,18 @@ const PageHeader = styled.div`
   flex-direction: column;
   justify-content: space-between;
   padding: 24px;
+
   a,
   .ant-typography {
     color: white;
   }
+
   .title {
     font-weight: bold;
     font-size: 20px;
     padding-bottom: 5px;
   }
+
   .description {
     font-size: 14px;
   }
@@ -38,6 +42,7 @@ const PageMain = styled.div`
   padding: 24px;
   grid-auto-rows: auto;
   row-gap: 8px;
+
   .icon {
     width: 100%;
     display: flex;
@@ -45,14 +50,17 @@ const PageMain = styled.div`
     padding-top: 8px;
     padding-bottom: 8px;
   }
+
   .l1-faucet {
     display: flex;
     flex-direction: column;
     padding-top: 20px;
+
     .ant-typography {
       color: white;
       padding-right: 5px;
     }
+
     a {
       color: rgb(255, 67, 66);
     }
@@ -65,24 +73,30 @@ const L1WalletAddress = styled.div`
   padding: 16px;
   border: 1px solid rgb(60, 58, 75);
   border-radius: 16px;
+
   .ant-typography {
     color: white;
   }
+
   .title {
     font-size: 16px;
     padding-bottom: 10px;
   }
+
   .address {
     font-size: 16px;
     padding-bottom: 10px;
   }
+
   .copy {
     color: rgb(255, 67, 66);
+
     .ant-typography {
       font-size: 14px;
       color: rgb(255, 67, 66);
       padding-right: 5px;
     }
+
     &:hover {
       cursor: pointer;
     }
@@ -92,6 +106,7 @@ const WithDrawalButton = styled.div`
   margin-top: 20px;
   display: flex;
   justify-content: center;
+
   .submit-button {
     align-items: center;
     border: 0px;
@@ -114,6 +129,7 @@ const WithDrawalButton = styled.div`
     background-color: rgb(255, 67, 66);
     color: white;
     width: 100%;
+
     &:disabled {
       background-color: rgb(60, 55, 66);
       border-color: rgb(60, 55, 66);
@@ -122,12 +138,14 @@ const WithDrawalButton = styled.div`
       cursor: not-allowed;
     }
   }
+
   button:hover {
     cursor: pointer;
   }
 `;
 const ConfirmModal = styled(Modal)`
   color: white;
+
   .ant-modal-content {
     border-radius: 32px;
     background: rgb(39, 37, 52);
@@ -135,6 +153,7 @@ const ConfirmModal = styled(Modal)`
     border: 1px solid rgb(60, 58, 75);
     color: white;
   }
+
   .ant-modal-header {
     background: rgb(39, 37, 52);
     border: 1px solid rgb(60, 58, 75);
@@ -145,30 +164,37 @@ const ConfirmModal = styled(Modal)`
     display: flex;
     align-items: center;
   }
+
   .ant-modal-title,
   .ant-list-item {
     color: white;
   }
+
   .ant-modal-body {
     padding: 24px;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
+
   .ant-modal-close-x {
     color: white;
   }
+
   .ant-typography {
     color: white;
     justify-content: space-between;
   }
+
   .tips {
     margin: 24px 0;
   }
+
   .anticon-loading {
     font-size: 50px;
     color: rgb(255, 67, 66);
   }
+
   .icon-container {
     padding-bottom: 20px;
   }
@@ -183,6 +209,31 @@ interface Token {
 
 interface SUDT extends Token {
   type: Script;
+}
+
+function L2Balance() {
+  const lightGodwoken = useLightGodwoken();
+
+  const l2Address = lightGodwoken?.provider.l2Address;
+  const { data: balance } = useQuery(
+    ["queryL2Balance", { address: l2Address }],
+    () => {
+      return lightGodwoken?.getL2CkbBalance();
+    },
+    {
+      enabled: !!lightGodwoken,
+    },
+  );
+
+  if (!l2Address) return null;
+  if (!balance) {
+    return (
+      <span>
+        <LoadingOutlined />
+      </span>
+    );
+  }
+  return <span>L2 Balance: {getDisplayAmount(BigInt(balance), 8)} CKB</span>;
 }
 
 export default function Deposit() {
@@ -249,21 +300,16 @@ export default function Deposit() {
         </L1WalletAddress>
         <PageMain className="main">
           <CKBInputPanel value={ckbInput} onUserInput={setCkbInput} label="Deposit" isL1></CKBInputPanel>
-          <div className="icon">
-            <PlusOutlined />
-          </div>
-          <CurrencyInputPanel
-            value={outputValue}
-            onUserInput={setOutputValue}
-            label="sUDT(optional)"
-            onSelectedChange={handleSelectedChange}
-            isL1
-          ></CurrencyInputPanel>
+
           <WithDrawalButton>
             <Button className="submit-button" disabled={submitButtonDisable} onClick={showModal}>
               Deposit
             </Button>
           </WithDrawalButton>
+
+          <div>
+            <L2Balance />
+          </div>
           <div className="l1-faucet">
             <Text>Need Layer 1 test tokens?</Text>
             <a href="https://faucet.nervos.org/" target="_blank" rel="noreferrer">
