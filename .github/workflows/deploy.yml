@@ -1,0 +1,21 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  gh-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - name: build
+        run: |
+          yarn install --frozen-lockfile --force
+          yarn build
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4.2.2
+        with:
+          branch: develop # The branch the action should deploy to.
+          folder: build # The folder the action should deploy.
