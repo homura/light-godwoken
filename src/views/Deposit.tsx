@@ -1,6 +1,6 @@
-import { CopyOutlined, InfoCircleOutlined, LoadingOutlined } from "@ant-design/icons";
-import { Script } from "@ckb-lumos/lumos";
-import { Button, Modal, notification, Tooltip, Typography } from "antd";
+import { InfoCircleOutlined, LoadingOutlined } from "@ant-design/icons";
+import { BI, Script } from "@ckb-lumos/lumos";
+import { Button, message, Modal, notification, Tooltip, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useLightGodwoken } from "../hooks/useLightGodwoken";
@@ -8,6 +8,7 @@ import CKBInputPanel from "./CKBInputPanel";
 import Page from "./Page";
 import { useQuery } from "react-query";
 import { getDisplayAmount } from "../utils/formatTokenAmount";
+import { ConnectButton } from "../components/ConnectButton";
 
 const { Text } = Typography;
 
@@ -236,6 +237,44 @@ function L2Balance() {
   return <span>L2 Balance: {getDisplayAmount(BigInt(balance), 8)} CKB</span>;
 }
 
+function FaucetTip() {
+  const [faucetTip, setFaucetTip] = useState(false);
+  const lightGodwoken = useLightGodwoken();
+
+  useEffect(() => {
+    if (!lightGodwoken) return;
+
+    lightGodwoken.getL1CkbBalance().then((balance) => {
+      if (BI.from(balance).eq(0)) {
+        setFaucetTip(true);
+      }
+    });
+  }, [lightGodwoken]);
+
+  return (
+    <div>
+      <p>
+        <b>Important</b>: To claim L2 Godwoken testnet tokens, you must first have L1 testnet tokens in your L1 account.
+      </p>
+      <p> Copy your L1 address (after your wallet is connected) and use the L1 testnet faucet to claim L1 tokens.</p>
+
+      {!lightGodwoken ? (
+        <ConnectButton />
+      ) : (
+        <Button
+          type="primary"
+          onClick={async () => {
+            await navigator.clipboard.writeText(lightGodwoken?.provider.getL1Address() || "");
+            window.location.href = "https://faucet.nervos.org";
+          }}
+        >
+          Copy L1 address and claim from faucet
+        </Button>
+      )}
+    </div>
+  );
+}
+
 export default function Deposit() {
   const [ckbInput, setCkbInput] = useState("");
   const [outputValue, setOutputValue] = useState("");
@@ -279,25 +318,16 @@ export default function Deposit() {
   };
 
   const copyAddress = () => {
-    navigator.clipboard.writeText(lightGodwoken?.provider.getL1Address() || "");
+    void navigator.clipboard.writeText(lightGodwoken?.provider.getL1Address() || "");
+    void message.success("copied to clipboard");
   };
   return (
     <Page>
       <PageContent>
         <PageHeader className="header">
           <Text className="title">Deposit To Layer2</Text>
-          <Text className="description">
-            To deposit, transfer CKB or supported sUDT tokens to your L1 Wallet Address first
-          </Text>
+          <FaucetTip />
         </PageHeader>
-        <L1WalletAddress>
-          <Text className="title">L1 Wallet Address</Text>
-          <Text className="address">{lightGodwoken?.provider.getL1Address()}</Text>
-          <div className="copy" onClick={copyAddress}>
-            <Text>Copy Address</Text>
-            <CopyOutlined />
-          </div>
-        </L1WalletAddress>
         <PageMain className="main">
           <CKBInputPanel
             value={ckbInput}
@@ -305,7 +335,7 @@ export default function Deposit() {
             label={
               <span>
                 Deposit&nbsp;
-                <Tooltip title="For some reason it is needed to leave at least 64 CKBs on L1 when using this app, this issue will be optimised in the future.">
+                <Tooltip title="For some reason it is needed to leave at least 64 CKB on L1 when using this app, this issue will be optimised in the future.">
                   <InfoCircleOutlined style={{ verticalAlign: "middle" }} />
                 </Tooltip>
               </span>
@@ -321,12 +351,6 @@ export default function Deposit() {
 
           <div>
             <L2Balance />
-          </div>
-          <div className="l1-faucet">
-            <Text>Need Layer 1 test tokens?</Text>
-            <a href="https://faucet.nervos.org/" target="_blank" rel="noreferrer">
-              CKB Testnet Faucet
-            </a>
           </div>
         </PageMain>
         <div className="footer"></div>
