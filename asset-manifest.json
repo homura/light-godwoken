@@ -1,23 +1,23 @@
 {
   "files": {
     "main.css": "/light-godwoken/static/css/main.6dea0f05.chunk.css",
-    "main.js": "/light-godwoken/static/js/main.87613b0f.chunk.js",
-    "main.js.map": "/light-godwoken/static/js/main.87613b0f.chunk.js.map",
+    "main.js": "/light-godwoken/static/js/main.2274f5de.chunk.js",
+    "main.js.map": "/light-godwoken/static/js/main.2274f5de.chunk.js.map",
     "runtime-main.js": "/light-godwoken/static/js/runtime-main.afacc4e3.js",
     "runtime-main.js.map": "/light-godwoken/static/js/runtime-main.afacc4e3.js.map",
     "static/css/2.6c9f4a9d.chunk.css": "/light-godwoken/static/css/2.6c9f4a9d.chunk.css",
-    "static/js/2.1f05c8e6.chunk.js": "/light-godwoken/static/js/2.1f05c8e6.chunk.js",
-    "static/js/2.1f05c8e6.chunk.js.map": "/light-godwoken/static/js/2.1f05c8e6.chunk.js.map",
+    "static/js/2.d5b6c30b.chunk.js": "/light-godwoken/static/js/2.d5b6c30b.chunk.js",
+    "static/js/2.d5b6c30b.chunk.js.map": "/light-godwoken/static/js/2.d5b6c30b.chunk.js.map",
     "index.html": "/light-godwoken/index.html",
     "static/css/2.6c9f4a9d.chunk.css.map": "/light-godwoken/static/css/2.6c9f4a9d.chunk.css.map",
     "static/css/main.6dea0f05.chunk.css.map": "/light-godwoken/static/css/main.6dea0f05.chunk.css.map",
-    "static/js/2.1f05c8e6.chunk.js.LICENSE.txt": "/light-godwoken/static/js/2.1f05c8e6.chunk.js.LICENSE.txt"
+    "static/js/2.d5b6c30b.chunk.js.LICENSE.txt": "/light-godwoken/static/js/2.d5b6c30b.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.afacc4e3.js",
     "static/css/2.6c9f4a9d.chunk.css",
-    "static/js/2.1f05c8e6.chunk.js",
+    "static/js/2.d5b6c30b.chunk.js",
     "static/css/main.6dea0f05.chunk.css",
-    "static/js/main.87613b0f.chunk.js"
+    "static/js/main.2274f5de.chunk.js"
   ]
 }
