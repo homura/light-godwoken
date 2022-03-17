@@ -1,8 +1,7 @@
-import { Cell, Hash, HashType, helpers, HexNumber, HexString, Script, toolkit, utils } from "@ckb-lumos/lumos";
+import { Cell, Hash, helpers, HexNumber, HexString, Script, toolkit, utils } from "@ckb-lumos/lumos";
 import * as secp256k1 from "secp256k1";
 import { getLayer2Config } from "./constants/index";
 import { OMNI_LOCK_CELL_DEP, SECP256K1_BLACK160_CELL_DEP, SUDT_CELL_DEP } from "./constants/layer1ConfigUtils";
-import { TOKEN_LIST } from "./constants/tokens";
 import {
   NormalizeDepositLockArgs,
   NormalizeRawWithdrawalRequest,
@@ -19,13 +18,13 @@ import {
   GetL2CkbBalancePayload,
   GetSudtBalances,
   GetSudtBalancesResult,
+  GodwokenVersion,
+  LightGodwokenBase,
   ProxyERC20,
   SUDT,
   WithdrawalEventEmitter,
   WithdrawalEventEmitterPayload,
   WithdrawResult,
-  GodwokenVersion,
-  LightGodwokenBase,
 } from "./lightGodwokenType";
 import {
   SerializeDepositLockArgs,
@@ -37,13 +36,19 @@ const { SCRIPTS, ROLLUP_CONFIG } = getLayer2Config();
 
 export default abstract class DefaultLightGodwoken implements LightGodwokenBase {
   provider: LightGodwokenProvider;
+
   constructor(provider: LightGodwokenProvider) {
     this.provider = provider;
   }
+
   abstract getBuiltinErc20List(): ProxyERC20[];
+
   abstract getBuiltinSUDTList(): SUDT[];
+
   abstract listWithdraw(): Promise<WithdrawResult[]>;
+
   abstract getVersion(): GodwokenVersion;
+
   abstract withdrawWithEvent(payload: WithdrawalEventEmitterPayload): WithdrawalEventEmitter;
 
   async deposit(payload: DepositPayload): Promise<string> {
@@ -292,7 +297,11 @@ export default abstract class DefaultLightGodwoken implements LightGodwokenBase 
   }
 
   async getL1CkbBalance(payload?: GetL1CkbBalancePayload): Promise<HexNumber> {
-    const collector = this.provider.ckbIndexer.collector({ lock: helpers.parseAddress(this.provider.l1Address) });
+    const collector = this.provider.ckbIndexer.collector({
+      lock: helpers.parseAddress(this.provider.l1Address),
+      type: "empty",
+      outputDataLenRange: ["0x0", "0x1"],
+    });
     let collectedSum = BigInt(0);
     for await (const cell of collector.collect()) {
       collectedSum += BigInt(cell.cell_output.capacity);

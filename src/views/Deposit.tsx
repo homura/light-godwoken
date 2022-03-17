@@ -1,6 +1,6 @@
-import { CopyOutlined, LoadingOutlined } from "@ant-design/icons";
+import { CopyOutlined, InfoCircleOutlined, LoadingOutlined } from "@ant-design/icons";
 import { Script } from "@ckb-lumos/lumos";
-import { Button, Modal, notification, Typography } from "antd";
+import { Button, Modal, notification, Tooltip, Typography } from "antd";
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useLightGodwoken } from "../hooks/useLightGodwoken";
@@ -299,7 +299,19 @@ export default function Deposit() {
           </div>
         </L1WalletAddress>
         <PageMain className="main">
-          <CKBInputPanel value={ckbInput} onUserInput={setCkbInput} label="Deposit" isL1></CKBInputPanel>
+          <CKBInputPanel
+            value={ckbInput}
+            onUserInput={setCkbInput}
+            label={
+              <span>
+                Deposit&nbsp;
+                <Tooltip title="For some reason it is needed to leave at least 64 CKBs on L1 when using this app, this issue will be optimised in the future.">
+                  <InfoCircleOutlined style={{ verticalAlign: "middle" }} />
+                </Tooltip>
+              </span>
+            }
+            isL1
+          />
 
           <WithDrawalButton>
             <Button className="submit-button" disabled={submitButtonDisable} onClick={showModal}>

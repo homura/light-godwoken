@@ -52,7 +52,7 @@ interface CKBInputPanelProps {
   value: string;
   onUserInput: (value: string) => void;
   isL1?: boolean;
-  label?: string;
+  label?: React.ReactElement | string;
 }
 export default function CKBInputPanel({ value, onUserInput, label, isL1 }: CKBInputPanelProps) {
   const [showMaxButton, setShowMaxButton] = useState(true);
@@ -78,7 +78,7 @@ export default function CKBInputPanel({ value, onUserInput, label, isL1 }: CKBIn
   }, [value, ckbBalance]);
 
   const handelMaxClick = () => {
-    onUserInput(getDisplayAmount(BigInt(ckbBalance), 8));
+    onUserInput(getDisplayAmount(BigInt(ckbBalance) - BigInt(64 * 10 ** 8), 8));
     setShowMaxButton(false);
   };
   return (
