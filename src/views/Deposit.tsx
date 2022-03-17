@@ -265,6 +265,7 @@ function FaucetTip() {
           type="primary"
           onClick={async () => {
             await navigator.clipboard.writeText(lightGodwoken?.provider.getL1Address() || "");
+            message.success("copied L1 address to clipboard");
             window.location.href = "https://faucet.nervos.org";
           }}
         >
