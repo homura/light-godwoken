@@ -7,24 +7,22 @@ import DefaultLightGodwokenProvider from "../light-godwoken/lightGodwokenProvide
 export const LightGodwokenContext = createContext<LightGodwoken | null>(null);
 
 const addNetwork = (ethereum: any) => {
-  const params = [
-    {
-      chainId: "0x315db00000006",
-      chainName: "GodwokenV1",
-      nativeCurrency: {
-        name: "pETH",
-        symbol: "pETH",
-        decimals: 18,
+  ethereum.request({
+    method: "wallet_addEthereumChain",
+    params: [
+      {
+        chainId: "0x315db00000006",
+        chainName: "GodwokenV1",
+        nativeCurrency: {
+          name: "pETH",
+          symbol: "pETH",
+          decimals: 18,
+        },
+        rpcUrls: ["https://godwoken-testnet-web3-v1-rpc.ckbapp.dev"],
+        blockExplorerUrls: ["https://v1.aggron.gwscan.com/"],
       },
-      rpcUrls: ["https://godwoken-testnet-web3-v1-rpc.ckbapp.dev"],
-      blockExplorerUrls: ["https://v1.aggron.gwscan.com/"],
-    },
-  ];
-
-  ethereum
-    .request({ method: "wallet_addEthereumChain", params })
-    .then(() => console.log("Success"))
-    .catch((error: Error) => console.log("Error", error.message));
+    ],
+  });
 };
 
 export const Provider: React.FC = (props) => {

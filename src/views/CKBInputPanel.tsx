@@ -4,6 +4,8 @@ import styled from "styled-components";
 import { useLightGodwoken } from "../hooks/useLightGodwoken";
 import { getDisplayAmount } from "../utils/formatTokenAmount";
 import NumericalInput from "./NumericalInput";
+import { useQuery } from "react-query";
+import { LoadingOutlined } from "@ant-design/icons";
 
 const StyleWrapper = styled.div`
   font-size: 14px;
@@ -59,6 +61,17 @@ export default function CKBInputPanel({ value, onUserInput, label, isL1 }: CKBIn
   const [ckbBalance, setCkbBalance] = useState("");
   const lightGodwoken = useLightGodwoken();
 
+  const { data: l1CKBBalance, isLoading: isFetchingL1CKBBalance } = useQuery(
+    ["queryL1CKBBalance"],
+    async () => {
+      if (!lightGodwoken) return "0x0";
+      return lightGodwoken.getL1CkbBalance();
+    },
+    {
+      enabled: !!lightGodwoken,
+    },
+  );
+
   useEffect(() => {
     const fetchData = async () => {
       const balance = isL1
@@ -85,7 +98,9 @@ export default function CKBInputPanel({ value, onUserInput, label, isL1 }: CKBIn
     <StyleWrapper>
       <Row className="first-row">
         <Typography.Text>{label}</Typography.Text>
-        <Typography.Text>Balance: {getDisplayAmount(BigInt(ckbBalance), 8) || ""}</Typography.Text>
+        <Typography.Text>
+          Balance: {isFetchingL1CKBBalance ? <LoadingOutlined /> : getDisplayAmount(BigInt(l1CKBBalance || 0), 8)}
+        </Typography.Text>
       </Row>
       <Row className="input-wrapper">
         <NumericalInput

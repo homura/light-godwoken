@@ -226,6 +226,21 @@ function L2Balance() {
     },
   );
 
+  function watchCKB() {
+    (window.ethereum as any)?.request({
+      method: "wallet_watchAsset",
+      params: {
+        type: "ERC20",
+        options: {
+          address: "0x86efaff75201Ed513c2c9061f2913eec850af56C",
+          symbol: "pCKB",
+          decimals: 8,
+          image: "https://raw.githubusercontent.com/ErikThiart/cryptocurrency-icons/master/16/nervos-network.png",
+        },
+      },
+    });
+  }
+
   if (!l2Address) return null;
   if (!balance) {
     return (
@@ -234,7 +249,16 @@ function L2Balance() {
       </span>
     );
   }
-  return <span>L2 Balance: {getDisplayAmount(BigInt(balance), 8)} CKB</span>;
+  return (
+    <div style={{ marginTop: "0.5em", display: "flex", alignItems: "center" }}>
+      <div>
+        L2 Balance: {getDisplayAmount(BigInt(balance), 8)} CKB{" "}
+        <Button type="primary" size="small" onClick={watchCKB}>
+          watch
+        </Button>
+      </div>
+    </div>
+  );
 }
 
 function FaucetTip() {
@@ -256,7 +280,7 @@ function FaucetTip() {
       <p>
         <b>Important</b>: To claim L2 Godwoken testnet tokens, you must first have L1 testnet tokens in your L1 account.
       </p>
-      <p> Copy your L1 address (after your wallet is connected) and use the L1 testnet faucet to claim L1 tokens.</p>
+      <p>Copy your L1 address (after your wallet is connected) and use the L1 testnet faucet to claim L1 tokens.</p>
 
       {!lightGodwoken ? (
         <ConnectButton />
@@ -265,8 +289,8 @@ function FaucetTip() {
           type="primary"
           onClick={async () => {
             await navigator.clipboard.writeText(lightGodwoken?.provider.getL1Address() || "");
-            message.success("copied L1 address to clipboard");
-            window.location.href = "https://faucet.nervos.org";
+            await message.success("copied L1 address to clipboard", 1);
+            window.open("https://faucet.nervos.org", "_blank");
           }}
         >
           Copy L1 address and claim from faucet
