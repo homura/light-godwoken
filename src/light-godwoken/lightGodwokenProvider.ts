@@ -56,12 +56,11 @@ export default class DefaultLightGodwokenProvider implements LightGodwokenProvid
     if (env === "v0") {
       config.initializeConfig(config.predefined.AGGRON4);
       configObj = PROVIDER_CONFIG.AGGRON;
+      this.web3 = new Web3(polyjuiceProvider);
     } else if (env === "v1") {
       config.initializeConfig(config.predefined.AGGRON4);
       configObj = PROVIDER_CONFIG.GODWOKEN_V1;
-    } else if (env === "mainnet") {
-      config.initializeConfig(config.predefined.LINA);
-      configObj = PROVIDER_CONFIG.LINA;
+      this.web3 = new Web3(ethereum);
     } else {
       throw new Error("env not defined, please use AGGRON or LINA.");
     }
@@ -80,8 +79,6 @@ export default class DefaultLightGodwokenProvider implements LightGodwokenProvid
       this.l2Address = accounts[0];
       this.l1Address = this.generateL1Address(this.l2Address);
     });
-
-    this.web3 = new Web3(polyjuiceProvider);
   }
 
   async sendWithdrawTransaction(withdrawalRequest: WithdrawalRequest): Promise<string> {
