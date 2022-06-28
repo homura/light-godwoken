@@ -17,7 +17,7 @@ import {
   WithdrawResultWithCell,
 } from "./lightGodwokenType";
 import DefaultLightGodwoken from "./lightGodwoken";
-import { CKB_SUDT_ID, getTokenList } from "./constants/tokens";
+import { CKB_SUDT_ID } from "./constants/tokens";
 import ERC20 from "./constants/ERC20.json";
 import LightGodwokenProvider from "./lightGodwokenProvider";
 import { RawWithdrawalRequestV1, WithdrawalRequestExtraCodec } from "./schemas/codecV1";
@@ -38,9 +38,9 @@ import {
   getLatestConfigFromLocalStorage,
 } from "./constants/configManager";
 import { GodwokenVersion } from "./constants/configTypes";
-import { isMainnet } from "./env";
 import { Contract as MulticallContract, Provider as MulticallProvider, setMulticallAddress } from "ethers-multicall";
 import { BigNumber, providers } from "ethers";
+import { predefined } from "./constants/predefined";
 export default class DefaultLightGodwokenV1 extends DefaultLightGodwoken implements LightGodwokenV1 {
   listWithdraw(): Promise<WithdrawResultWithCell[]> {
     throw new Error("Method not implemented.");
@@ -136,7 +136,7 @@ export default class DefaultLightGodwokenV1 extends DefaultLightGodwoken impleme
   getBuiltinSUDTList(): SUDT[] {
     const sudtList: SUDT[] = [];
     const sudtScriptConfig = this.provider.getConfig().layer1Config.SCRIPTS.sudt;
-    getTokenList(isMainnet).v1.forEach((token) => {
+    predefined.v1.tokenList.forEach((token) => {
       const tokenL1Script: Script = {
         code_hash: sudtScriptConfig.code_hash,
         hash_type: sudtScriptConfig.hash_type as HashType,
@@ -155,7 +155,7 @@ export default class DefaultLightGodwokenV1 extends DefaultLightGodwoken impleme
   getBuiltinErc20List(): ProxyERC20[] {
     const map: ProxyERC20[] = [];
     const sudtScriptConfig = this.provider.getConfig().layer1Config.SCRIPTS.sudt;
-    getTokenList(isMainnet).v1.forEach((token) => {
+    predefined.v1.tokenList.forEach((token) => {
       const tokenL1Script: Script = {
         code_hash: sudtScriptConfig.code_hash,
         hash_type: sudtScriptConfig.hash_type as HashType,

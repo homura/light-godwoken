@@ -16,7 +16,6 @@ import {
   WithdrawResultV0,
   CKB_SUDT_ID,
 } from "./lightGodwokenType";
-import { getTokenList } from "./constants/tokens";
 import { AbiItems } from "@polyjuice-provider/base";
 import { SUDT_ERC20_PROXY_ABI } from "./constants/sudtErc20ProxyAbi";
 import { GodwokenClient } from "./godwoken/godwokenV0";
@@ -37,7 +36,7 @@ import {
 import { GodwokenVersion } from "./constants/configTypes";
 import { getAdvancedSettings } from "./constants/configManager";
 import { GodwokenScanner } from "./godwoken/godwokenScannerV1";
-import { isMainnet } from "./env";
+import { predefined } from "./constants/predefined";
 export default class DefaultLightGodwokenV0 extends DefaultLightGodwoken implements LightGodwokenV0 {
   godwokenClient;
   godwokenScannerClient;
@@ -92,7 +91,7 @@ export default class DefaultLightGodwokenV0 extends DefaultLightGodwoken impleme
   getBuiltinErc20List(): ProxyERC20[] {
     const map: ProxyERC20[] = [];
     const sudtScriptConfig = this.provider.getConfig().layer1Config.SCRIPTS.sudt;
-    getTokenList(isMainnet).v0.forEach((token) => {
+    predefined.v0.tokenList.forEach((token) => {
       const tokenL1Script: Script = {
         code_hash: sudtScriptConfig.code_hash,
         hash_type: sudtScriptConfig.hash_type as HashType,
@@ -125,7 +124,7 @@ export default class DefaultLightGodwokenV0 extends DefaultLightGodwoken impleme
   getBuiltinSUDTList(): SUDT[] {
     const map: SUDT[] = [];
     const sudtScriptConfig = this.provider.getConfig().layer1Config.SCRIPTS.sudt;
-    getTokenList(isMainnet).v0.forEach((token) => {
+    predefined.v0.tokenList.forEach((token) => {
       const tokenL1Script: Script = {
         code_hash: sudtScriptConfig.code_hash,
         hash_type: sudtScriptConfig.hash_type as HashType,
